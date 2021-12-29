@@ -1,6 +1,5 @@
 package com.springBajo8.springBajo8.service;
 
-//import com.yoandypv.reactivestack.messages.domain.Message;
 import com.springBajo8.springBajo8.domain.citasDTOReactiva;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,4 +16,10 @@ public interface IcitasReactivaService {
     Flux<citasDTOReactiva> findAll();
 
     Mono<citasDTOReactiva> findById(String id);
+
+    Mono<citasDTOReactiva> cancelarCitaReactiva(String id);
+
+    Flux<citasDTOReactiva> buscarCitaPorFechaYHora(String fechaReservaCita, String horaReservaCita);
+
+    String consultarMedico (String id);
 }

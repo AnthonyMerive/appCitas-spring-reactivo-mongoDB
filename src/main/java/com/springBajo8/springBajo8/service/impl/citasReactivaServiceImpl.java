@@ -1,8 +1,5 @@
 package com.springBajo8.springBajo8.service.impl;
 
-//import com.yoandypv.reactivestack.messages.domain.Message;
-//import com.yoandypv.reactivestack.messages.repository.MessageRepository;
-//import com.yoandypv.reactivestack.messages.service.MessageService;
 import com.springBajo8.springBajo8.domain.citasDTOReactiva;
 import com.springBajo8.springBajo8.repository.IcitasReactivaRepository;
 import com.springBajo8.springBajo8.service.IcitasReactivaService;
@@ -19,20 +16,19 @@ public class citasReactivaServiceImpl implements IcitasReactivaService {
 
     @Override
     public Mono<citasDTOReactiva> save(citasDTOReactiva citasDTOReactiva) {
-        return this.IcitasReactivaRepository.save(citasDTOReactiva);
+        return IcitasReactivaRepository.save(citasDTOReactiva);
     }
 
     @Override
     public Mono<citasDTOReactiva> delete(String id) {
-        return this.IcitasReactivaRepository
+        return IcitasReactivaRepository
                 .findById(id)
                 .flatMap(p -> this.IcitasReactivaRepository.deleteById(p.getId()).thenReturn(p));
-
     }
 
     @Override
     public Mono<citasDTOReactiva> update(String id, citasDTOReactiva citasDTOReactiva) {
-        return this.IcitasReactivaRepository.findById(id)
+        return IcitasReactivaRepository.findById(id)
                 .flatMap(citasDTOReactiva1 -> {
                     citasDTOReactiva.setId(id);
                     return save(citasDTOReactiva);
@@ -42,17 +38,42 @@ public class citasReactivaServiceImpl implements IcitasReactivaService {
 
     @Override
     public Flux<citasDTOReactiva> findByIdPaciente(String idPaciente) {
-        return this.IcitasReactivaRepository.findByIdPaciente(idPaciente);
+        return IcitasReactivaRepository.findByIdPaciente(idPaciente);
     }
 
 
     @Override
     public Flux<citasDTOReactiva> findAll() {
-        return this.IcitasReactivaRepository.findAll();
+        return IcitasReactivaRepository.findAll();
     }
 
     @Override
     public Mono<citasDTOReactiva> findById(String id) {
-        return this.IcitasReactivaRepository.findById(id);
+        return IcitasReactivaRepository.findById(id);
+    }
+
+    @Override
+    public Mono<citasDTOReactiva> cancelarCitaReactiva(String id) {
+        return IcitasReactivaRepository.findById(id)
+                .flatMap(citasDTOReactiva -> {
+                    if (citasDTOReactiva.getEstadoReservaCita()) {
+                        citasDTOReactiva.setEstadoReservaCita(false);
+                        return save(citasDTOReactiva);
+                    }
+                    return Mono.empty();
+                });
+    }
+
+    @Override
+    public Flux<citasDTOReactiva> buscarCitaPorFechaYHora(String fecha, String hora) {
+        return IcitasReactivaRepository.findByfechayHora(fecha, hora);
+    }
+
+    @Override
+    public String consultarMedico(String id) {
+        citasDTOReactiva cita = IcitasReactivaRepository.findById(id).block();
+        return cita != null
+                ? cita.getNombreMedico().concat(" " + cita.getApellidosMedico())
+                : "No se encontro la cita";
     }
 }
